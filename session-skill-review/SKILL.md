@@ -62,7 +62,7 @@ Info-gathering commands are the usual missing step: `ls` to find the layout, `gi
 
 ## Pitfalls
 
-- The skill index sits in every session's system prompt, so `grep` for a skill name matches all sessions. Count reads, not mentions.
+- The skill index sits in every session's system prompt, so `grep` for a skill name matches all sessions. Count reads, not mentions. But a `<skill name="...">` block **injected into a user message** is a real fire (the platform's "use this skill" mechanism) — not an index mention; the script now counts these as `line N: <skill> injection`, and the body may run bundled scripts without ever reading `SKILL.md`.
 - A `bash cat` of a skill is not counted by the script. If the transcript shows one, add it by hand.
 - A read is not automatically a fire — the user may have said "read the brainstorming skill". Check the trigger message before believing the count.
 - A step the skill gets right makes the same command look "covered" while every run also depends on an undocumented one beside it. Read the inventory for what is absent, not only for what is wrong.

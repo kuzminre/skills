@@ -7,7 +7,10 @@
                                    every tool call, in order, with line numbers
 
 A skill is "used" when the agent opened a file under a skills directory: a
-`read` tool call whose path contains /skills/<name>/ and ends in .md. Bash
+`read` tool call whose path contains /skills/<name>/ and ends in .md, or when
+the skill was loaded by direct `<skill name="...">` injection into the user
+context (the platform's own "use this skill" mechanism) -- the body may then
+run its bundled scripts without ever `read`-ing SKILL.md. Bash
 commands that merely mention a skills path are ignored, and so is the skill
 index in the system prompt -- that index is in every session and proves nothing.
 """
@@ -21,6 +24,9 @@ import sys
 
 ROOT = os.path.expanduser("~/.pi/agent/sessions")
 SKILL_RE = re.compile(r"/skills/([^/\s\"']+)/")
+# Direct skill loading, distinct from the index: <skill name="X" location="...">
+# injected into a user message. The name may carry the platform "skill:" prefix.
+INJECT_RE = re.compile(r"<skill\s+name=[\"']([^\"']+)[\"']")
 
 
 def rows(path):
@@ -57,6 +63,14 @@ def fires(path):
     evidence = collections.defaultdict(list)
     for n, e in rows(path):
         m = e.get("message") or {}
+        if m.get("role") == "user":
+            inj = INJECT_RE.search(text(m))
+            if inj:
+                name = inj.group(1)
+                if name.startswith("skill:"):
+                    name = name[len("skill:"):]
+                counter[name] += 1
+                evidence[name].append(f"line {n}: <skill> injection")
         for part in m.get("content") or []:
             if not (isinstance(part, dict) and part.get("type") == "toolCall"):
                 continue
