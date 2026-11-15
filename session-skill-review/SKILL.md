@@ -9,11 +9,11 @@ Extraction is mechanical: `skills-used.py` beside this file (see its docstring f
 
 ## 1. Pick the session
 
-Run `python3 skills-used.py --list 5`. Show the lines and ask which one.
+Run `python3 skills-used.py --list 5`. Paste the numbered list as-is (numbers, date, first user message — drop the long paths) and ask which number.
 
 Logs live in `~/.pi/agent/sessions/<cwd-slug>/*.jsonl`, where the slug is the working directory with `/` replaced by `-` (`--home-rus-tmp-pi--`). If the user names a project, filter that folder instead of listing everything.
 
-**Done when** the user has named a file path. Take the newest unasked only if they said "the last one".
+**Done when** the user has answered a number and you have the path it maps to. Re-run the identical `--list` command to resolve it — changing the limit renumbers the list, and the user answered the old numbers.
 
 ## 2. Find the skills that fired
 

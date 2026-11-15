@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Which skills did a pi session actually invoke?
 
-  skills-used.py --list [N]        newest sessions: date, path, first user message
+  skills-used.py --list [N]        newest sessions, numbered, for picking one
   skills-used.py <session.jsonl>   skills reached inside that session
   skills-used.py --actions <session.jsonl> [--from LINE]
                                    every tool call, in order, with line numbers
@@ -98,9 +98,9 @@ def main(argv):
 
     if not argv or argv[0] == "--list":
         limit = int(argv[1]) if len(argv) > 1 else 8
-        for p in sessions()[:limit]:
+        for i, p in enumerate(sessions()[:limit], 1):
             stamp = datetime.datetime.fromtimestamp(os.path.getmtime(p))
-            print(f"{stamp:%Y-%m-%d %H:%M}  {p}  ::  {first_user(p)}")
+            print(f"{i}. {stamp:%Y-%m-%d %H:%M}  {p}  ::  {first_user(p)}")
         return 0
 
     path = argv[0]
